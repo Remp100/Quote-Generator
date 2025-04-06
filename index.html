@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quote Generator</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col justify-center items-center p-4">
+      <!-- Quote Generator Card -->
+      <div
+        class="quote-card w-full max-w-lg bg-white p-6 rounded-lg shadow-xl text-center md:max-w-3xl mb-6"
+      >
+        <h1 class="text-3xl font-semibold text-gray-800 mb-6">
+          Random Quote Generator
+        </h1>
+
+        <!-- Quote Display Area -->
+        <div id="quote" class="text-xl italic text-gray-600 mb-4">
+          Loading...
+        </div>
+
+        <!-- Author Display -->
+        <div id="author" class="text-lg text-gray-500 mb-6">Please wait...</div>
+
+        <!-- Generate New Quote Button -->
+        <button
+          id="new-quote"
+          class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-300"
+        >
+          Get New Quote
+        </button>
+
+        <!-- Loading State -->
+        <div id="loading" class="hidden mt-4 text-blue-500 font-semibold">
+          Fetching new quote...
+        </div>
+
+        <!-- Error Message -->
+        <div id="error" class="hidden mt-4 text-red-500">
+          Something went wrong. Please try again later.
+        </div>
+
+        <!-- Save Favorite Section -->
+        <div id="favorites-actions" class="mt-4 justify-between items-center">
+          <button
+            id="save-favorite"
+            class="mt-4 px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-300"
+          >
+            Save to Favorites
+          </button>
+        </div>
+      </div>
+
+      <!-- Favorites Section -->
+      <div
+        id="favorites-section"
+        class="w-full max-w-3xl mt-12 text-center md:max-w-3xl"
+      >
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+          Your Favorite Quotes
+        </h2>
+        <ul
+          id="favorites-list"
+          class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-h-96 overflow-y-auto"
+        >
+          <!-- Favorite quotes will be dynamically listed here -->
+        </ul>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
