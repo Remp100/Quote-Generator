@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inspire Me - Authors</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 text-white p-4 w-full fixed top-0 left-0 z-50">
+      <div class="max-w-screen-xl mx-auto flex justify-between items-center">
+        <!-- Left side: App name -->
+        <div class="text-2xl font-bold">
+          <a href="index.html" class="hover:text-yellow-300">Inspire Me</a>
+        </div>
+
+        <!-- Center: Links -->
+        <div class="flex space-x-8 pl-20">
+          <a href="favorites.html" class="hover:text-yellow-300">Favorites</a>
+          <a href="authors.html" class="hover:text-yellow-300">Authors</a>
+          <a href="categories.html" class="hover:text-yellow-300">Categories</a>
+        </div>
+
+        <!-- Right side: Search -->
+        <div class="flex items-center space-x-2">
+          <!-- Added ml-auto here -->
+          <input
+            type="text"
+            placeholder="Search Quotes"
+            class="px-4 py-2 rounded-lg text-gray-700 w-48"
+          />
+          <button
+            class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Authors Section -->
+    <div class="min-h-screen flex flex-col items-center p-8 space-y-12 mt-20">
+      <h1 class="text-3xl font-semibold text-gray-800 mb-6">Authors</h1>
+
+      <!-- Filter by Alphabet or Descending -->
+      <div class="mb-4">
+        <label for="filter" class="mr-2 text-lg">Sort By:</label>
+        <select
+          id="filter"
+          class="px-4 py-2 bg-white border border-gray-300 rounded-lg"
+        >
+          <option value="asc">Alphabetical Ascendant</option>
+          <option value="desc">Alphabetical Descendant</option>
+        </select>
+      </div>
+
+      <!-- Authors List -->
+      <div
+        id="authors-list"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-6xl"
+      >
+        <!-- Authors will be dynamically rendered here -->
+      </div>
+    </div>
+
+    <script src="authors.js"></script>
+  </body>
+</html>

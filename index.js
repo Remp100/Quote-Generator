@@ -23,7 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Update the quote and author on the page
       quoteElement.textContent = `${data.content}`;
-      authorElement.textContent = `- ${data.author}`;
+      authorElement.textContent = `${data.author}`;
+
+      // Save the quote and author to localStorage
+      localStorage.setItem("quote", data.content);
+      localStorage.setItem("author", data.author);
+
       loadingElement.classList.add("hidden");
     } catch (error) {
       console.error("Error fetching quote:", error);
@@ -34,19 +39,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Check if there's a saved quote in localStorage on page load
+  function loadSavedQuote() {
+    const savedQuote = localStorage.getItem("quote");
+    const savedAuthor = localStorage.getItem("author");
+
+    if (savedQuote && savedAuthor) {
+      quoteElement.textContent = savedQuote;
+      authorElement.textContent = savedAuthor;
+    } else {
+      fetchQuote(); // If no saved quote, fetch a new one
+    }
+  }
+
   // Save the current quote to favorites in LocalStorage
   function saveFavoriteQuote() {
-    const currentQuote = quoteElement.textContent;
-    const currentAuthor = authorElement.textContent;
+    const currentQuote = quoteElement.textContent.trim();
+    const currentAuthor = authorElement.textContent.trim();
 
     if (currentQuote === "Loading..." || !currentAuthor) {
       return;
     }
 
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    // ✅ Check for duplicate quote+author
+    const isDuplicate = favorites.some(
+      (fav) =>
+        fav.quote.trim() === currentQuote && fav.author.trim() === currentAuthor
+    );
+
+    if (isDuplicate) {
+      errorElement.classList.remove("hidden");
+      errorElement.textContent =
+        "This quote is already saved to your favorites.";
+      return;
+    }
+
+    // ✅ Save only if not duplicate
     favorites.push({ quote: currentQuote, author: currentAuthor });
     localStorage.setItem("favorites", JSON.stringify(favorites));
 
+    errorElement.classList.add("hidden"); // Clear error on success
     renderFavorites();
   }
 
@@ -87,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
       listItem.innerHTML = `
                   <blockquote class="italic text-gray-600 py-4">"${favorite.quote}"</blockquote>
                   <p class="text-right text-gray-500"> ${favorite.author}</p>
-                  <button class="absolute top-2 right-2 text-red-500 hover:text-red-600" onclick="removeFavoriteQuote(${index})">
+                  <button class="absolute top-2 right-1 text-red-500 hover:text-red-600" onclick="removeFavoriteQuote(${index})">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                       </svg>
@@ -101,8 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
   newQuoteButton.addEventListener("click", fetchQuote);
   saveFavoriteButton.addEventListener("click", saveFavoriteQuote);
 
-  // Initial quote load
-  fetchQuote();
+  // Initial quote load from localStorage or fetch if not present
+  loadSavedQuote();
 
   // Load favorites on page load
   renderFavorites();
