@@ -45,7 +45,7 @@ function loadSavedQuote() {
 
   if (savedQuote && savedAuthor) {
     quoteElement.textContent = savedQuote;
-    authorElement.textContent = savedAuthor;
+    authorElement.textContent = `- ${savedAuthor}`;
   } else {
     fetchQuote(); // If no saved quote, fetch a new one
   }
@@ -118,7 +118,7 @@ function renderFavorites() {
     );
     listItem.innerHTML = `
                   <blockquote class="italic text-gray-600 py-4">"${favorite.quote}"</blockquote>
-                  <p class="text-right text-gray-500"> ${favorite.author}</p>
+                  <p class="text-right text-gray-500">${favorite.author}</p>
                   <button class="absolute top-2 right-1 text-red-500 hover:text-red-600" onclick="removeFavoriteQuote(${index})">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
