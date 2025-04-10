@@ -103,7 +103,7 @@ function renderQuotes(quotes, category) {
     // Author text
     const authorText = document.createElement("p");
     authorText.className = "text-right text-sm text-gray-600";
-    authorText.textContent = `— ${quote.author}`;
+    authorText.textContent = `- ${quote.author}`;
 
     // Actions row (category + favorite icon)
     const actions = document.createElement("div");
@@ -116,9 +116,10 @@ function renderQuotes(quotes, category) {
 
     // Heart icon for quote favorite
     const favBtn = document.createElement("button");
+    const formattedAuthor = `- ${quote.author.trim()}`;
     const isFav = favoriteQuotes.some(
       (fav) =>
-        fav.quote === quote.content.trim() && fav.author === quote.author.trim()
+        fav.quote === quote.content.trim() && fav.author === formattedAuthor
     );
     favBtn.textContent = isFav ? "💖" : "🤍";
     favBtn.className = "text-lg";
@@ -142,16 +143,19 @@ function renderQuotes(quotes, category) {
 
 // Toggle favorite status of a quote
 function toggleFavoriteQuote(quoteObj) {
+  const formattedAuthor = `- ${quoteObj.author}`;
   const exists = favoriteQuotes.some(
-    (q) => q.quote === quoteObj.quote && q.author === quoteObj.author
+    (q) => q.quote === quoteObj.quote && q.author === formattedAuthor
   );
-
   if (exists) {
     favoriteQuotes = favoriteQuotes.filter(
       (q) => !(q.quote === quoteObj.quote && q.author === quoteObj.author)
     );
   } else {
-    favoriteQuotes.push(quoteObj);
+    favoriteQuotes.push({
+      quote: quoteObj.quote,
+      author: formattedAuthor,
+    });
   }
 
   localStorage.setItem("favorites", JSON.stringify(favoriteQuotes));

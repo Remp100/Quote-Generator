@@ -235,7 +235,7 @@ async function showAuthorModal(author) {
 
         const heartBtn = document.createElement("span");
         const isFavorite = favorites.some(
-          (q) => q.quote === quote.content && q.author === author.name
+          (q) => q.quote === quote.content && q.author === `- ${author.name}`
         );
         heartBtn.textContent = isFavorite ? "💖" : "🤍";
         heartBtn.className = "cursor-pointer text-lg ml-2";
@@ -261,14 +261,15 @@ async function showAuthorModal(author) {
 // Toggle favorite status for a quote
 function toggleFavoriteQuote({ quote, author }) {
   let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  const formattedAuthor = `- ${author}`;
   const index = favorites.findIndex(
-    (q) => q.quote === quote && q.author === author
+    (q) => q.quote === quote && q.author === formattedAuthor
   );
 
   if (index >= 0) {
     favorites.splice(index, 1);
   } else {
-    favorites.push({ quote, author });
+    favorites.push({ quote, author: formattedAuthor });
   }
 
   localStorage.setItem("favorites", JSON.stringify(favorites));
