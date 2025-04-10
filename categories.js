@@ -31,7 +31,7 @@ async function fetchQuotesByCategory(category) {
 
   try {
     const res = await fetch(
-      `https://api.quotable.io/quotes?tags=${encodeURIComponent(
+      `http://api.quotable.io/quotes?tags=${encodeURIComponent(
         category
       )}&limit=50`
     );
