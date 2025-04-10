@@ -16,7 +16,7 @@ fetchCategories(); // Start fetching categories when script loads
 // Fetch all available categories (tags) from the API
 async function fetchCategories() {
   try {
-    const res = await fetch("http://api.quotable.io/tags");
+    const res = await fetch("https://api.quotable.io/tags");
     const data = await res.json();
     allCategories = data;
     renderCategoryButtons(); // After fetching, render the buttons
@@ -31,7 +31,7 @@ async function fetchQuotesByCategory(category) {
 
   try {
     const res = await fetch(
-      `http://api.quotable.io/quotes?tags=${encodeURIComponent(
+      `https://api.quotable.io/quotes?tags=${encodeURIComponent(
         category
       )}&limit=50`
     );

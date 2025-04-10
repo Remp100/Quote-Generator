@@ -15,7 +15,7 @@ async function fetchAllAuthors() {
 
   while (hasMore) {
     const response = await fetch(
-      `http://api.quotable.io/authors?page=${page}&limit=100`
+      `https://api.quotable.io/authors?page=${page}&limit=100`
     );
     const data = await response.json();
 
@@ -193,7 +193,7 @@ async function showAuthorModal(author) {
 
   try {
     const response = await fetch(
-      `http://api.quotable.io/quotes?author=${encodeURIComponent(
+      `https://api.quotable.io/quotes?author=${encodeURIComponent(
         author.name
       )}&limit=100`
     );
