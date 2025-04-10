@@ -1,0 +1,16 @@
+body {
+  font-family: "Arial", sans-serif;
+}
+
+blockquote {
+  font-style: italic;
+  color: #4a4a4a;
+}
+
+button {
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}

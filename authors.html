@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inspire Me - Authors</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 text-white p-4 w-full fixed top-0 left-0 z-50">
+      <div class="max-w-screen-xl mx-auto flex justify-between items-center">
+        <!-- Left side: App name -->
+        <div class="text-2xl font-bold">
+          <a href="index.html" class="hover:text-yellow-300">Inspire Me</a>
+        </div>
+
+        <!-- Center: Links -->
+        <div class="flex space-x-8 pl-20">
+          <a href="favorites.html" class="hover:text-yellow-300">Favorites</a>
+          <a href="authors.html" class="text-yellow-300">Authors</a>
+          <a href="categories.html" class="hover:text-yellow-300">Categories</a>
+        </div>
+
+        <!--
+        <div class="flex items-center space-x-2">
+          <input
+            type="text"
+            placeholder="Search Quotes"
+            class="px-4 py-2 rounded-lg text-gray-700 w-48"
+          />
+          <button
+            class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+          >
+            Search
+          </button>
+        </div> -->
+      </div>
+    </nav>
+
+    <!-- Authors Section -->
+    <div
+      id="controls"
+      class="sticky top-0 z-20 bg-white flex flex-col items-center pb-6 pt-2 space-y-6 shadow-md"
+    >
+      <h1 class="text-3xl font-semibold text-gray-800 pt-20">Authors</h1>
+
+      <!-- Filter and Search Bar -->
+      <div class="flex items-center space-x-20">
+        <!-- Filter by Alphabet or Descending -->
+        <div>
+          <label for="filter" class="mr-2 text-sm">Sort By:</label>
+          <select
+            id="filter"
+            class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm"
+          >
+            <option value="asc">Alphabetical Ascendant</option>
+            <option value="desc">Alphabetical Descendant</option>
+          </select>
+        </div>
+
+        <div>
+          <input
+            type="text"
+            id="search"
+            placeholder="Search Authors"
+            class="px-4 py-2 border border-gray-300 rounded-lg w-64 text-sm"
+          />
+        </div>
+      </div>
+
+      <!-- Alphabetical Scroll Bar -->
+      <div id="alphabet-bar" class="flex flex-wrap justify-center gap-2"></div>
+    </div>
+
+    <!-- Authors List -->
+    <div
+      id="authors-list"
+      class="flex flex-col space-y-8 w-full max-w-6xl mx-auto mt-8 px-4"
+    >
+      <!-- Authors will be dynamically rendered here -->
+    </div>
+
+    <!-- Modal -->
+    <div
+      id="author-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 relative overflow-auto max-h-[80vh]"
+      >
+        <button
+          id="close-modal"
+          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold"
+        >
+          &times;
+        </button>
+        <h2
+          id="modal-author-name"
+          class="text-2xl font-semibold mb-2 text-gray-800"
+        ></h2>
+        <p id="modal-author-bio" class="text-gray-600 mb-4"></p>
+
+        <h3 class="text-lg font-semibold mb-2 text-blue-700">Quotes</h3>
+        <ul id="modal-author-quotes" class="space-y-2 max-h-60 overflow-y-auto">
+          <!-- Quotes will go here -->
+        </ul>
+      </div>
+    </div>
+
+    <script src="authors.js"></script>
+  </body>
+</html>

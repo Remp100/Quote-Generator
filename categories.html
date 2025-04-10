@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inspire Me - Authors</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 text-white p-4 w-full fixed top-0 left-0 z-50">
+      <div class="max-w-screen-xl mx-auto flex justify-between items-center">
+        <!-- Left side: App name -->
+        <div class="text-2xl font-bold">
+          <a href="index.html" class="hover:text-yellow-300">Inspire Me</a>
+        </div>
+
+        <!-- Center: Links -->
+        <div class="flex space-x-8 pl-20">
+          <a href="favorites.html" class="hover:text-yellow-300">Favorites</a>
+          <a href="authors.html" class="hover:text-yellow-300">Authors</a>
+          <a href="categories.html" class="text-yellow-300">Categories</a>
+        </div>
+
+        <!--  Search 
+        <div class="flex items-center space-x-2">
+          Added ml-auto here
+          <input
+            type="text"
+            placeholder="Search Quotes"
+            class="px-4 py-2 rounded-lg text-gray-700 w-48"
+          />
+          <button
+            class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+          >
+            Search
+          </button>
+        </div>  -->
+      </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 pt-20">
+      <h1 class="text-3xl font-semibold text-gray-800 pb-6 pt-6">Categories</h1>
+      <!-- Category Buttons -->
+      <div id="category-buttons" class="flex flex-wrap gap-4 mb-10"></div>
+
+      <!-- Quotes Display -->
+      <div
+        id="quotes-container"
+        class="grid gap-6 grid-cols-1 md:grid-cols-2"
+      ></div>
+    </main>
+    <script src="categories.js"></script>
+  </body>
+</html>
