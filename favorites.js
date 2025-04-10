@@ -1,18 +1,27 @@
-// Get elements to display favorite quotes, authors, and categories
+// ======= Element References =======
 const favoriteQuotesList = document.getElementById("favorite-quotes-list");
 const favoriteAuthorsList = document.getElementById("favorite-authors-list");
 const favoriteCategoriesList = document.getElementById(
   "favorite-categories-list"
 );
 
-// Function to render favorite quotes
+// ======= Initial Rendering on Page Load =======
+document.addEventListener("DOMContentLoaded", () => {
+  renderFavoriteQuotes();
+  renderFavoriteAuthors();
+  renderFavoriteCategories();
+});
+
+// ======= Render Functions =======
+
+// Render list of favorite quotes
 function renderFavoriteQuotes() {
   const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-
-  favoriteQuotesList.innerHTML = ""; // Clear existing content
+  favoriteQuotesList.innerHTML = "";
 
   if (favorites.length === 0) {
     favoriteQuotesList.innerHTML = "<li>No favorite quotes found.</li>";
+    return;
   }
 
   favorites.forEach((favorite, index) => {
@@ -26,6 +35,7 @@ function renderFavoriteQuotes() {
       "italic",
       "relative"
     );
+
     listItem.innerHTML = `
       <blockquote>"${favorite.quote}"</blockquote>
       <p class="text-right text-gray-500">${favorite.author}</p>
@@ -35,18 +45,19 @@ function renderFavoriteQuotes() {
         </svg>
       </button>
     `;
+
     favoriteQuotesList.appendChild(listItem);
   });
 }
 
-// Function to render favorite authors
+// Render list of favorite authors
 function renderFavoriteAuthors() {
   const savedAuthors = JSON.parse(localStorage.getItem("savedAuthors")) || [];
-
-  favoriteAuthorsList.innerHTML = ""; // Clear existing content
+  favoriteAuthorsList.innerHTML = "";
 
   if (savedAuthors.length === 0) {
     favoriteAuthorsList.innerHTML = "<li>No favorite authors found.</li>";
+    return;
   }
 
   savedAuthors.forEach((author, index) => {
@@ -59,6 +70,7 @@ function renderFavoriteAuthors() {
       "text-left",
       "relative"
     );
+
     listItem.textContent = author.name;
 
     const deleteButton = document.createElement("button");
@@ -74,24 +86,22 @@ function renderFavoriteAuthors() {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     `;
-    deleteButton.onclick = function () {
-      deleteFavoriteAuthor(index);
-    };
+    deleteButton.onclick = () => deleteFavoriteAuthor(index);
 
     listItem.appendChild(deleteButton);
     favoriteAuthorsList.appendChild(listItem);
   });
 }
 
-// Function to render favorite categories
+// Render list of favorite categories
 function renderFavoriteCategories() {
   const savedCategories =
     JSON.parse(localStorage.getItem("favoriteCategories")) || [];
-
-  favoriteCategoriesList.innerHTML = ""; // Clear existing content
+  favoriteCategoriesList.innerHTML = "";
 
   if (savedCategories.length === 0) {
     favoriteCategoriesList.innerHTML = "<li>No favorite categories found.</li>";
+    return;
   }
 
   savedCategories.forEach((category, index) => {
@@ -104,6 +114,7 @@ function renderFavoriteCategories() {
       "text-left",
       "relative"
     );
+
     listItem.textContent = category;
 
     const deleteButton = document.createElement("button");
@@ -119,43 +130,36 @@ function renderFavoriteCategories() {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     `;
-    deleteButton.onclick = function () {
-      deleteFavoriteCategory(index);
-    };
+    deleteButton.onclick = () => deleteFavoriteCategory(index);
 
     listItem.appendChild(deleteButton);
     favoriteCategoriesList.appendChild(listItem);
   });
 }
 
-// Function to delete a favorite quote from localStorage
+// ======= Delete Functions =======
+
+// Delete a favorite quote by index
 function deleteFavoriteQuote(index) {
   const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-  favorites.splice(index, 1); // Remove the quote at the specified index
-  localStorage.setItem("favorites", JSON.stringify(favorites)); // Update localStorage
-  renderFavoriteQuotes(); // Re-render the quotes
+  favorites.splice(index, 1);
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  renderFavoriteQuotes();
 }
 
-// Function to delete a favorite author from localStorage
+// Delete a favorite author by index
 function deleteFavoriteAuthor(index) {
   const savedAuthors = JSON.parse(localStorage.getItem("savedAuthors")) || [];
-  savedAuthors.splice(index, 1); // Remove the author at the specified index
-  localStorage.setItem("savedAuthors", JSON.stringify(savedAuthors)); // Update localStorage
-  renderFavoriteAuthors(); // Re-render the authors
+  savedAuthors.splice(index, 1);
+  localStorage.setItem("savedAuthors", JSON.stringify(savedAuthors));
+  renderFavoriteAuthors();
 }
 
-// Function to delete a favorite category from localStorage
+// Delete a favorite category by index
 function deleteFavoriteCategory(index) {
   const savedCategories =
     JSON.parse(localStorage.getItem("favoriteCategories")) || [];
-  savedCategories.splice(index, 1); // Remove the category at the specified index
-  localStorage.setItem("favoriteCategories", JSON.stringify(savedCategories)); // Update localStorage
-  renderFavoriteCategories(); // Re-render the categories
-}
-
-// Initial rendering when the page loads
-document.addEventListener("DOMContentLoaded", () => {
-  renderFavoriteQuotes();
-  renderFavoriteAuthors();
+  savedCategories.splice(index, 1);
+  localStorage.setItem("favoriteCategories", JSON.stringify(savedCategories));
   renderFavoriteCategories();
-});
+}

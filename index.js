@@ -1,3 +1,4 @@
+// ======= DOM Element References =======
 const quoteElement = document.getElementById("quote");
 const authorElement = document.getElementById("author");
 const newQuoteButton = document.getElementById("new-quote");
@@ -8,7 +9,9 @@ const favoritesList = document.getElementById("favorites-list");
 const favoritesActions = document.getElementById("favorites-actions");
 const saveFavoriteButton = document.getElementById("save-favorite");
 
-// Fetch a random quote from the API
+// ======= Quote Fetching and Display =======
+
+// Fetch a random quote from API
 async function fetchQuote() {
   loadingElement.classList.remove("hidden");
   errorElement.classList.add("hidden");
@@ -18,27 +21,24 @@ async function fetchQuote() {
     if (!response.ok) {
       throw new Error("Failed to fetch the quote");
     }
-    const data = await response.json();
 
-    // Update the quote and author on the page
-    quoteElement.textContent = `${data.content}`;
+    const data = await response.json();
+    quoteElement.textContent = data.content;
     authorElement.textContent = `- ${data.author}`;
 
-    // Save the quote and author to localStorage
     localStorage.setItem("quote", data.content);
     localStorage.setItem("author", data.author);
-
-    loadingElement.classList.add("hidden");
   } catch (error) {
     console.error("Error fetching quote:", error);
-    errorElement.classList.remove("hidden");
     quoteElement.textContent = "Something went wrong. Please try again.";
     authorElement.textContent = "";
+    errorElement.classList.remove("hidden");
+  } finally {
     loadingElement.classList.add("hidden");
   }
 }
 
-// Check if there's a saved quote in localStorage on page load
+// Load quote from localStorage if available
 function loadSavedQuote() {
   const savedQuote = localStorage.getItem("quote");
   const savedAuthor = localStorage.getItem("author");
@@ -47,22 +47,21 @@ function loadSavedQuote() {
     quoteElement.textContent = savedQuote;
     authorElement.textContent = `- ${savedAuthor}`;
   } else {
-    fetchQuote(); // If no saved quote, fetch a new one
+    fetchQuote();
   }
 }
 
-// Save the current quote to favorites in LocalStorage
+// ======= Favorites Management =======
+
+// Save current quote to favorites
 function saveFavoriteQuote() {
   const currentQuote = quoteElement.textContent.trim();
   const currentAuthor = authorElement.textContent.trim();
 
-  if (currentQuote === "Loading..." || !currentAuthor) {
-    return;
-  }
+  if (currentQuote === "Loading..." || !currentAuthor) return;
 
   const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
-  // ✅ Check for duplicate quote+author
   const isDuplicate = favorites.some(
     (fav) =>
       fav.quote.trim() === currentQuote && fav.author.trim() === currentAuthor
@@ -74,15 +73,13 @@ function saveFavoriteQuote() {
     return;
   }
 
-  // ✅ Save only if not duplicate
   favorites.push({ quote: currentQuote, author: currentAuthor });
   localStorage.setItem("favorites", JSON.stringify(favorites));
-
-  errorElement.classList.add("hidden"); // Clear error on success
+  errorElement.classList.add("hidden");
   renderFavorites();
 }
 
-// Remove a quote from favorites
+// Remove quote from favorites by index
 function removeFavoriteQuote(index) {
   const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
   favorites.splice(index, 1);
@@ -90,7 +87,7 @@ function removeFavoriteQuote(index) {
   renderFavorites();
 }
 
-// Attach the removeFavoriteQuote function to the window object
+// Make removeFavoriteQuote accessible in inline HTML onclick
 window.removeFavoriteQuote = removeFavoriteQuote;
 
 // Render the list of favorite quotes
@@ -99,10 +96,12 @@ function renderFavorites() {
   favoritesList.innerHTML = "";
 
   if (favorites.length === 0) {
-    favoritesSection.classList.add("hidden"); // Hide if no favorites
-  } else {
-    favoritesSection.classList.remove("hidden"); // Show if favorites exist
+    favoritesSection.classList.add("hidden");
+    return;
   }
+
+  favoritesSection.classList.remove("hidden");
+
   favorites.forEach((favorite, index) => {
     const listItem = document.createElement("li");
     listItem.classList.add(
@@ -116,25 +115,25 @@ function renderFavorites() {
       "space-y-2",
       "relative"
     );
+
     listItem.innerHTML = `
-                  <blockquote class="italic text-gray-600 py-4">"${favorite.quote}"</blockquote>
-                  <p class="text-right text-gray-500">${favorite.author}</p>
-                  <button class="absolute top-2 right-1 text-red-500 hover:text-red-600" onclick="removeFavoriteQuote(${index})">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                      </svg>
-                  </button>
-              `;
+      <blockquote class="italic text-gray-600 py-4">"${favorite.quote}"</blockquote>
+      <p class="text-right text-gray-500">${favorite.author}</p>
+      <button class="absolute top-2 right-1 text-red-500 hover:text-red-600" onclick="removeFavoriteQuote(${index})">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    `;
+
     favoritesList.appendChild(listItem);
   });
 }
 
-// Event listeners
+// ======= Event Listeners =======
 newQuoteButton.addEventListener("click", fetchQuote);
 saveFavoriteButton.addEventListener("click", saveFavoriteQuote);
 
-// Initial quote load from localStorage or fetch if not present
+// ======= Initial Load =======
 loadSavedQuote();
-
-// Load favorites on page load
 renderFavorites();

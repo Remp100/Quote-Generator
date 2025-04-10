@@ -1,13 +1,17 @@
+// Get references to DOM elements
 const filterElement = document.getElementById("filter");
 const authorsListElement = document.getElementById("authors-list");
 const searchElement = document.getElementById("search");
-let allAuthors = [];
 
-// Fetch authors from the API
+let allAuthors = []; // Global cache for fetched authors
+
+// ======= Fetch & Data Utilities  =======
+
+// Fetch all authors from the API (handles pagination)
 async function fetchAllAuthors() {
   let page = 1;
-  let hasMore = true;
   let authors = [];
+  let hasMore = true;
 
   while (hasMore) {
     const response = await fetch(
@@ -23,24 +27,20 @@ async function fetchAllAuthors() {
     }
   }
 
-  allAuthors = authors; // Store globally
+  allAuthors = authors;
   return authors;
 }
 
-// Group authors by the first letter of their name or special characters
+// Group authors by the first letter (or a special character group)
 function groupAuthorsByLetter(authors) {
   const groups = {};
 
   authors.forEach((author) => {
-    // Get the first character of the author's name
     const firstChar = author.name.charAt(0).toUpperCase();
-
-    // If it's a special character, group it under "$%^&"
     const groupKey = /^[A-Za-z]/.test(firstChar)
       ? firstChar
       : "$%^& (Special Characters)";
 
-    // Add author to the corresponding group
     if (!groups[groupKey]) {
       groups[groupKey] = [];
     }
@@ -50,9 +50,22 @@ function groupAuthorsByLetter(authors) {
   return groups;
 }
 
+// Sort authors alphabetically (ascending)
+function sortAuthorsAsc(authors) {
+  return authors.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// Sort authors alphabetically (descending)
+function sortAuthorsDesc(authors) {
+  return authors.sort((a, b) => b.name.localeCompare(a.name));
+}
+
+// ============= Rendering Functions ================
+
+// Generate clickable alphabet bar based on author groups
 function generateAlphabetBar(groupedAuthors) {
   const alphabetBar = document.getElementById("alphabet-bar");
-  alphabetBar.innerHTML = ""; // Clear existing letters
+  alphabetBar.innerHTML = "";
 
   Object.keys(groupedAuthors).forEach((letter) => {
     const button = document.createElement("button");
@@ -80,20 +93,18 @@ function generateAlphabetBar(groupedAuthors) {
   });
 }
 
-// Render authors grouped by the first letter or special characters
+// Render all authors grouped by letter
 function renderAuthors(authors) {
   const savedAuthors = JSON.parse(localStorage.getItem("savedAuthors")) || [];
-  authorsListElement.innerHTML = ""; // Clear the list
+  authorsListElement.innerHTML = "";
 
   const groupedAuthors = groupAuthorsByLetter(authors);
 
   Object.keys(groupedAuthors).forEach((group) => {
-    // Container for group
     const groupContainer = document.createElement("div");
     groupContainer.className = "flex flex-col w-full mb-8";
     groupContainer.id = `group-${group}`;
 
-    // Group Header
     const groupHeader = document.createElement("h3");
     groupHeader.classList.add(
       "text-l",
@@ -104,14 +115,11 @@ function renderAuthors(authors) {
     groupHeader.textContent = group;
     groupContainer.appendChild(groupHeader);
 
-    // Authors list as flex container
     const authorList = document.createElement("ul");
     authorList.classList.add("flex", "flex-wrap", "gap-4", "items-start");
 
     groupedAuthors[group].forEach((author) => {
-      const isAuthorFav = (savedAuthors || []).some(
-        (a) => a.name === author.name
-      );
+      const isAuthorFav = savedAuthors.some((a) => a.name === author.name);
 
       const authorElement = document.createElement("div");
       authorElement.classList.add(
@@ -129,19 +137,17 @@ function renderAuthors(authors) {
         "items-start"
       );
 
-      // Author Name (as clickable)
       const nameBtn = document.createElement("button");
       nameBtn.innerHTML = `<h2 class="text-sm font-semibold text-gray-800">${author.name}</h2>`;
       nameBtn.addEventListener("click", () => showAuthorModal(author));
 
-      // Heart Icon
       const heart = document.createElement("span");
-      heart.textContent = isAuthorFav ? "❤️" : "🤍";
+      heart.textContent = isAuthorFav ? "💖" : "🤍";
       heart.className = "text-lg cursor-pointer ml-2";
       heart.addEventListener("click", (e) => {
         e.stopPropagation();
         toggleFavoriteAuthor(author);
-        renderAuthors(allAuthors); // Rerender to update heart
+        renderAuthors(allAuthors);
       });
 
       authorElement.appendChild(nameBtn);
@@ -155,13 +161,17 @@ function renderAuthors(authors) {
     groupContainer.appendChild(authorList);
     authorsListElement.appendChild(groupContainer);
   });
+
   generateAlphabetBar(groupedAuthors);
 }
 
+// ============= Favorites & Modals ===============
+
+// Toggle favorite status for an author
 function toggleFavoriteAuthor(authorObj) {
   let savedAuthors = JSON.parse(localStorage.getItem("savedAuthors")) || [];
-
   const exists = savedAuthors.some((a) => a.name === authorObj.name);
+
   if (exists) {
     savedAuthors = savedAuthors.filter((a) => a.name !== authorObj.name);
   } else {
@@ -171,14 +181,14 @@ function toggleFavoriteAuthor(authorObj) {
   localStorage.setItem("savedAuthors", JSON.stringify(savedAuthors));
 }
 
+// Show modal with author details and their quotes
 async function showAuthorModal(author) {
-  // Show loading state
   document.getElementById("modal-author-name").textContent = author.name;
   document.getElementById("modal-author-bio").textContent =
     author.bio || "No bio available";
+
   const quotesList = document.getElementById("modal-author-quotes");
   quotesList.innerHTML = "<li>Loading quotes...</li>";
-
   document.getElementById("author-modal").classList.remove("hidden");
 
   try {
@@ -188,16 +198,16 @@ async function showAuthorModal(author) {
       )}&limit=100`
     );
     const data = await response.json();
-    quotesList.innerHTML = ""; // Clear loading
+    quotesList.innerHTML = "";
 
     if (data.results.length === 0) {
       quotesList.innerHTML = "<li class='text-gray-500'>No quotes found.</li>";
     } else {
       const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
       data.results.forEach((quote) => {
         const li = document.createElement("li");
 
-        // Wrapper that contains quote + heart
         const wrapper = document.createElement("div");
         wrapper.classList.add(
           "flex",
@@ -207,7 +217,6 @@ async function showAuthorModal(author) {
           "w-full"
         );
 
-        // Quote container
         const quoteBox = document.createElement("div");
         quoteBox.classList.add(
           "text-gray-700",
@@ -224,20 +233,19 @@ async function showAuthorModal(author) {
         quoteText.textContent = `"${quote.content}"`;
         quoteBox.appendChild(quoteText);
 
-        // Heart button (not affected by hover on quoteBox)
         const heartBtn = document.createElement("span");
-        const isFavorite = (favorites || []).some(
+        const isFavorite = favorites.some(
           (q) => q.quote === quote.content && q.author === author.name
         );
         heartBtn.textContent = isFavorite ? "💖" : "🤍";
         heartBtn.className = "cursor-pointer text-lg ml-2";
+
         heartBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           toggleFavoriteQuote({ quote: quote.content, author: author.name });
           heartBtn.textContent = heartBtn.textContent === "💖" ? "🤍" : "💖";
         });
 
-        // Build the row
         wrapper.appendChild(quoteBox);
         wrapper.appendChild(heartBtn);
         li.appendChild(wrapper);
@@ -250,30 +258,36 @@ async function showAuthorModal(author) {
   }
 }
 
-// Sort authors alphabetically ascending
-function sortAuthorsAsc(authors) {
-  return authors.sort((a, b) => a.name.localeCompare(b.name));
+// Toggle favorite status for a quote
+function toggleFavoriteQuote({ quote, author }) {
+  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  const index = favorites.findIndex(
+    (q) => q.quote === quote && q.author === author
+  );
+
+  if (index >= 0) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push({ quote, author });
+  }
+
+  localStorage.setItem("favorites", JSON.stringify(favorites));
 }
 
-// Sort authors alphabetically descending
-function sortAuthorsDesc(authors) {
-  return authors.sort((a, b) => b.name.localeCompare(a.name));
-}
+// ============= Event Listeners ==============
 
-// Handle filter change
+// Handle filter dropdown change
 filterElement.addEventListener("change", (event) => {
   const filterValue = event.target.value;
   let sortedAuthors = [...allAuthors];
 
-  if (filterValue === "asc") {
-    sortedAuthors = sortAuthorsAsc(sortedAuthors);
-  } else if (filterValue === "desc") {
-    sortedAuthors = sortAuthorsDesc(sortedAuthors);
-  }
+  if (filterValue === "asc") sortedAuthors = sortAuthorsAsc(sortedAuthors);
+  if (filterValue === "desc") sortedAuthors = sortAuthorsDesc(sortedAuthors);
 
   renderAuthors(sortedAuthors);
 });
 
+// Handle search input
 searchElement.addEventListener("input", (event) => {
   const query = event.target.value.toLowerCase();
   const filterValue = filterElement.value;
@@ -282,37 +296,21 @@ searchElement.addEventListener("input", (event) => {
     author.name.toLowerCase().includes(query)
   );
 
-  // Apply current sort
-  if (filterValue === "asc") {
-    filteredAuthors = sortAuthorsAsc(filteredAuthors);
-  } else if (filterValue === "desc") {
+  if (filterValue === "asc") filteredAuthors = sortAuthorsAsc(filteredAuthors);
+  if (filterValue === "desc")
     filteredAuthors = sortAuthorsDesc(filteredAuthors);
-  }
 
   renderAuthors(filteredAuthors);
 });
 
+// Close modal
 document.getElementById("close-modal").addEventListener("click", () => {
   document.getElementById("author-modal").classList.add("hidden");
 });
 
-function toggleFavoriteQuote({ quote, author }) {
-  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+// =========== Initializa App =============
 
-  const index = favorites.findIndex(
-    (q) => q.quote === quote && q.author === author
-  );
-
-  if (index >= 0) {
-    favorites.splice(index, 1); // Remove from favorites
-  } else {
-    favorites.push({ quote, author }); // Add to favorites
-  }
-
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-}
-
-// Fetch authors on page load
+// Fetch authors and render them on load
 fetchAllAuthors().then((authors) => {
   renderAuthors(sortAuthorsAsc([...authors]));
 });
